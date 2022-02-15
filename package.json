@@ -1,0 +1,24 @@
+{
+  "name": "portfolio_ecomm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HRossouw42/portfolio_ecomm.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HRossouw42/portfolio_ecomm/issues"
+  },
+  "homepage": "https://github.com/HRossouw42/portfolio_ecomm#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "nodemon": "^2.0.15"
+  }
+}
