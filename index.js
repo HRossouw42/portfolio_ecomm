@@ -1,5 +1,9 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+
 const app = express(); // instance of express
+app.use(bodyParser.urlencoded({ extended: true })); // employs body parcer globally as middleware
+
 const log = console.log.bind(console);
 
 app.get('/', (req, res) => {
@@ -16,19 +20,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
-  // on data event
-  req.on('data', (data) => {
-    // data retrieved in a buffer must be converted from utf8 and split
-    const parsed = data.toString('utf8').split('&');
-    const formData = {};
-    for (let pair of parsed) {
-      const [key, value] = pair.split('=');
-      formData[key] = value;
-    }
-
-    log(formData);
-  });
-
+  log(req.body);
   res.send('Account created!');
 });
 
