@@ -1,5 +1,8 @@
 const fs = require('fs');
 const crypto = require('crypto');
+const util = require('util');
+
+const scrypt = util.promisify(crypto.scrypt); // turn scrypt into a promise based function
 
 class UsersRepository {
   // check and see if filename given
@@ -41,17 +44,37 @@ class UsersRepository {
   }
 
   async create(attrs) {
+    // atrs -> signup object {email: '', password: ''}
+
     // random id
     attrs.id = this.randomId();
 
+    const salt = crypto.randomBytes(16).toString('hex');
+    const buff = await scrypt(attrs.password, salt, 64);
+
     const records = await this.getAll();
-    records.push(attrs);
+    // spread attrs object into a new object, then overwrite password with hashed + salt
+    const record = {
+      ...attrs,
+      password: `${buff.toString('hex')}-${salt}`,
+    };
+    records.push(record);
 
     // write record array back to this.filename
     await this.writeAll(records);
 
     // return attrs object for login purposes
-    return attrs;
+    return record;
+  }
+
+  async comparePasswords(saved, supplied) {
+    // saved -> password saved in database 'hashed-salt'
+    // supplied -> password given by user when signing in
+
+    const [hashed, salt] = saved.split('-'); // destructure split array
+    const hashedSuppliedBuff = await scrypt(supplied, salt, 64);
+
+    return hashed === hashedSuppliedBuff.toString('hex');
   }
 
   async getOne(id) {

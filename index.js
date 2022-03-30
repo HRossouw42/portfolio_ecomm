@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const usersRepo = require('./repositories/users');
 const cookieSession = require('cookie-session');
+const { comparePasswords } = require('./repositories/users');
 
 const app = express(); // instance of express
 app.use(bodyParser.urlencoded({ extended: true })); // employs body parcer globally as middleware
@@ -76,7 +77,11 @@ app.post('/signin', async (req, res) => {
     return res.send('Email not found');
   }
 
-  if (user.password !== password) {
+  const validPassword = await usersRepo.comparePasswords(
+    user.password,
+    password
+  );
+  if (!validPassword) {
     return res.send('Invalid password');
   }
 
